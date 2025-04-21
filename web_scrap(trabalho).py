@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from time import sleep
+import re
 
 # Primeiro acesso à OLX pra coletar os links
 driver = webdriver.Firefox()
@@ -36,6 +37,21 @@ for i, link in enumerate(links[:2]):
 
 todos_detalhes = []
 
+# Insere espaço entre letra minúscula seguida de maiúscula, ou entre letra e número
+def separar_palavras(texto):
+    return re.sub(r'(?<=[a-záéíóúãõç])(?=[A-Z0-9])', ' ', texto)
+
+# Lista de palavras indesejadas
+palavras_indesejadas = [
+    "Quilometragem",
+    "Potência do motor",
+    "Possui Kit GNV",
+    "Portas",
+    "Final de placa",
+    "Direção",
+    "Tipo de direção"
+]
+
 # Passa por todas as páginas
 for i, html in enumerate(htmls, 1):
     soup = BeautifulSoup(html, 'html.parser')
@@ -47,18 +63,21 @@ for i, html in enumerate(htmls, 1):
     descricao = soup.find_all('div', class_='ad__sc-2h9gkk-1 bdpQSX olx-d-flex olx-ai-flex-start olx-fd-column olx-flex')
 
     #Pega o municipio
-    municipio = soup.find('span', class_='olx-text olx-text--body-small olx-text--block olx-text--regular ad__sc-k5plwo-1 idmeSY')
+    municipio = soup.find('div', class_='ad__sc-o5hdud-1 jvsEyX olx-d-flex olx-ai-center')
     
-    # Extrai os textos da descricao
-    infoCarro = [d.text.strip() for d in descricao]
+    # Extrai os textos da descricao e usa a função para separar os texto que acabam vindo junto
+    infoCarro = [separar_palavras(d.text.strip()) for d in descricao]
+
+    # Filtra apenas as informações desejadas (remove as indesejadas)
+    infoCarro = [info for info in infoCarro if not any(info.startswith(palavra) for palavra in palavras_indesejadas)]
 
     # Adiciona o preço no final da lista, se existir
     if preco:
-        infoCarro.insert(14, f"Preço: {preco.text.strip()}")
+        infoCarro.append(separar_palavras(f"Preço {preco.text.strip()}"))
 
     # Adiciona o preço no final da lista, se existir
 
-    infoCarro.insert(15, f"Municipio: {municipio.text.strip()}")
+    infoCarro.append(separar_palavras(f"Municipio {municipio.text.strip()}"))
 
     # Salva os detalhes de cada carro
     todos_detalhes.append(infoCarro)
