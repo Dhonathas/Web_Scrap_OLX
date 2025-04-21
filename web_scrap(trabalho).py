@@ -26,7 +26,7 @@ driver.quit()  # Fecha o navegador depois de pegar os links
 htmls = []
 
 # Agora, para cada link, abre e fecha o navegador separadamente e definindo uma quantidade pra ele colocando um limite de 10
-for i, link in enumerate(links[:2]):
+for i, link in enumerate(links[:10]):
     driver = webdriver.Firefox()
     driver.get(link)
     sleep(2)  # tempo de carregamento da página
