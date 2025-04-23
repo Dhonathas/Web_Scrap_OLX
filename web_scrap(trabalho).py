@@ -14,11 +14,11 @@ driver.get(url)
 
 # Espera os anúncios carregarem
 WebDriverWait(driver, 10).until(
-    EC.presence_of_all_elements_located((By.CLASS_NAME, "AdCard_link__4c7W6"))
+    EC.presence_of_all_elements_located((By.CLASS_NAME, "olx-adcard__link"))
 )
 
 # Coleta todos os links dos anúncios
-elements = driver.find_elements(By.CLASS_NAME, "AdCard_link__4c7W6")
+elements = driver.find_elements(By.CLASS_NAME, "olx-adcard__link")
 links = [elem.get_attribute('href') for elem in elements]
 driver.quit()  # Fecha o navegador depois de pegar os links
 
