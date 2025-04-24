@@ -71,12 +71,10 @@ for i, html in enumerate(htmls, 1):
     # Filtra apenas as informações desejadas (remove as indesejadas)
     infoCarro = [info for info in infoCarro if not any(info.startswith(palavra) for palavra in palavras_indesejadas)]
 
-    # Adiciona o preço no final da lista, se existir
-    if preco:
-        infoCarro.append(separar_palavras(f"Preço {preco.text.strip()}"))
+    # Adiciona o preço na lista
+    infoCarro.append(separar_palavras(f"Preço {preco.text.strip()}"))
 
-    # Adiciona o preço no final da lista, se existir
-
+    # Adiciona o municipio na lista
     infoCarro.append(separar_palavras(f"Municipio {municipio.text.strip()}"))
 
     # Salva os detalhes de cada carro
