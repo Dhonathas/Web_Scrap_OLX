@@ -85,3 +85,6 @@ for i, detalhes in enumerate(todos_detalhes, 1):
     print(f"\nInformações do carro {i}:")
     for info in detalhes:
         print(f"- {info}")
+
+print( )
+print(todos_detalhes)
