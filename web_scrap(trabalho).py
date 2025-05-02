@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup
 from time import sleep
 import re
@@ -26,7 +28,7 @@ driver.quit()  # Fecha o navegador depois de pegar os links
 htmls = []
 
 # Agora, para cada link, abre e fecha o navegador separadamente e definindo uma quantidade pra ele colocando um limite de 10
-for i, link in enumerate(links[:10]):
+for i, link in enumerate(links[:2]):
     driver = webdriver.Firefox()
     driver.get(link)
     sleep(2)  # tempo de carregamento da página
@@ -88,3 +90,98 @@ for i, detalhes in enumerate(todos_detalhes, 1):
 
 print( )
 print(todos_detalhes)
+
+
+
+
+
+
+#-------------------------------- SEGUNDA PARTE -----------------------------------
+
+driver = webdriver.Firefox()
+url2 = 'http://weka.inf.ufes.br/IFESTP/login.php'
+driver.get(url2)
+
+#procura os elementos na pagina
+username = driver.find_element(By.NAME, 'username')
+password = driver.find_element(By.NAME, 'password')
+
+#coloca a senha nos elementos enccontrados e aperta enter
+username.send_keys('dhon')
+password.send_keys('dhon')
+password.send_keys(Keys.RETURN)
+
+sleep(2)
+for detalhes in todos_detalhes:
+    # Clica no botão 'inserir'
+    botao = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/button')
+    botao.click()
+    sleep(2)
+
+    # Converte lista em dicionário
+    dados = {}
+    for item in detalhes:
+        chave, valor = item.split(" ", 1)
+        dados[chave.strip()] = valor.strip()
+
+    # Marca
+    marca = driver.find_element(By.NAME, 'marca')
+    marca.send_keys(dados.get("Marca", ""))
+
+    # Modelo
+    modelo = driver.find_element(By.NAME, 'modelo')
+    modelo.send_keys(dados.get("Modelo", ""))
+
+    # Ano
+    ano = driver.find_element(By.NAME, 'ano')
+    ano.send_keys(dados.get("Ano", ""))
+
+    sleep(2)
+    # Câmbio automático
+    if dados.get("Câmbio", "").lower() == "automático":
+        cambio = driver.find_element(By.NAME, 'cambioAutomatico')
+        cambio.click()
+
+    sleep(2)
+    # Tipo de veículo
+    tipo_valor = dados.get("Tipo", "").lower()
+    if "hatch" in tipo_valor:
+        tipoVeiculo = driver.find_element(By.ID, 'c_hatch')
+        tipoVeiculo.click()
+    elif "sedan" in tipo_valor:
+        tipoVeiculo = driver.find_element(By.ID, 'c_sedan')
+        tipoVeiculo.click()
+
+    sleep(2)
+    # Cor
+    cor_select = Select(driver.find_element(By.ID, 'cor'))
+    cor_desejada = dados.get("Cor", "").lower()
+    if "branco" in cor_desejada:
+        cor_select.select_by_value("branco")
+    elif "preto" in cor_desejada:
+        cor_select.select_by_value("preto")
+    elif "prata" in cor_desejada:
+        cor_select.select_by_value("prata")
+    elif "vermelho" in cor_desejada:
+        cor_select.select_by_value("vermelho")
+    elif "verde" in cor_desejada:
+        cor_select.select_by_value("verde")
+    elif "azul" in cor_desejada:
+        cor_select.select_by_value("azul")
+    elif "rosa" in cor_desejada:
+        cor_select.select_by_value("rosa")
+    else:
+        cor_select.select_by_value("outro")
+
+    # Valor
+    valor = driver.find_element(By.NAME, 'valor')
+    valor_str = dados.get("Preço", "").replace("R$", "").replace(".", "").replace(",", ".").strip()
+    valor.send_keys(valor_str)
+
+    # Cidade
+    cidade = driver.find_element(By.NAME, 'municipio')
+    cidade.send_keys(dados.get("Municipio", ""))
+    cidade.send_keys(Keys.RETURN)
+    
+    # Espera antes de ir para o próximo
+    sleep(5)
