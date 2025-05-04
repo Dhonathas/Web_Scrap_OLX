@@ -114,74 +114,61 @@ password.send_keys(Keys.RETURN)
 sleep(2)
 for detalhes in todos_detalhes:
     # Clica no botão 'inserir'
-    botao = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/button')
-    botao.click()
+    cadastrar = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/button')
+    cadastrar.click()
     sleep(2)
 
-    # Converte lista em dicionário
-    dados = {}
-    for item in detalhes:
-        chave, valor = item.split(" ", 1)
-        dados[chave.strip()] = valor.strip()
+    modelo_valor = detalhes[1].replace("Modelo ", "")
+    marca_valor = detalhes[2].replace("Marca ", "")
+    ano_valor = detalhes[4].replace("Ano ", "")
+    tipo_valor = detalhes[3].replace("Tipo de veículo ", "").strip().lower()
+    cambio_valor = detalhes[6].replace("Câmbio ", "").strip().lower()
+    cor_valor = detalhes[7].replace("Cor ", "").strip().lower()
+    preco_valor = detalhes[7].replace("Preço R$", "").strip()
+    municipio_valor = detalhes[8].replace("Municipio ", "")
 
-    # Marca
+
     marca = driver.find_element(By.NAME, 'marca')
-    marca.send_keys(dados.get("Marca", ""))
+    marca.send_keys(marca_valor)
 
-    # Modelo
     modelo = driver.find_element(By.NAME, 'modelo')
-    modelo.send_keys(dados.get("Modelo", ""))
+    modelo.send_keys(modelo_valor)
 
-    # Ano
     ano = driver.find_element(By.NAME, 'ano')
-    ano.send_keys(dados.get("Ano", ""))
+    ano.send_keys(ano_valor)
 
-    sleep(2)
-    # Câmbio automático
-    if dados.get("Câmbio", "").lower() == "automático":
+    # Câmbio (checkbox)
+    if cambio_valor == "automático":
         cambio = driver.find_element(By.NAME, 'cambioAutomatico')
         cambio.click()
 
-    sleep(2)
-    # Tipo de veículo
-    tipo_valor = dados.get("Tipo", "").lower()
+    # Tipo de veículo (radio)
     if "hatch" in tipo_valor:
         tipoVeiculo = driver.find_element(By.ID, 'c_hatch')
         tipoVeiculo.click()
-    elif "sedan" in tipo_valor:
+    elif "sedã" in tipo_valor or "sedan" in tipo_valor:
         tipoVeiculo = driver.find_element(By.ID, 'c_sedan')
         tipoVeiculo.click()
 
-    sleep(2)
-    # Cor
+    # Cor (select)
     cor_select = Select(driver.find_element(By.ID, 'cor'))
-    cor_desejada = dados.get("Cor", "").lower()
-    if "branco" in cor_desejada:
-        cor_select.select_by_value("branco")
-    elif "preto" in cor_desejada:
-        cor_select.select_by_value("preto")
-    elif "prata" in cor_desejada:
-        cor_select.select_by_value("prata")
-    elif "vermelho" in cor_desejada:
-        cor_select.select_by_value("vermelho")
-    elif "verde" in cor_desejada:
-        cor_select.select_by_value("verde")
-    elif "azul" in cor_desejada:
-        cor_select.select_by_value("azul")
-    elif "rosa" in cor_desejada:
-        cor_select.select_by_value("rosa")
+    cores_possiveis = ["branco", "preto", "prata", "vermelho", "verde", "azul", "rosa"]
+
+    if cor_valor in cores_possiveis:
+        cor_select.select_by_value(cor_valor)
     else:
         cor_select.select_by_value("outro")
 
-    # Valor
     valor = driver.find_element(By.NAME, 'valor')
-    valor_str = dados.get("Preço", "").replace("R$", "").replace(".", "").replace(",", ".").strip()
-    valor.send_keys(valor_str)
+    valor.send_keys(preco_valor)
 
-    # Cidade
     cidade = driver.find_element(By.NAME, 'municipio')
-    cidade.send_keys(dados.get("Municipio", ""))
-    cidade.send_keys(Keys.RETURN)
+    cidade.send_keys(municipio_valor)
+
+    sleep(2)
+    
+    inserir = driver.find_element(By.XPATH, '/html/body/div[1]/div/form/div[4]/div[3]/input')
+    inserir.click()
     
     # Espera antes de ir para o próximo
     sleep(5)
