@@ -113,8 +113,7 @@ password.send_keys(Keys.RETURN)
 
 sleep(2)
 for detalhes in todos_detalhes:
-    # Clica no botão 'inserir'
-    cadastrar = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/button')
+    cadastrar = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/button')#ta dando erro aqui
     cadastrar.click()
     sleep(2)
 
@@ -137,12 +136,12 @@ for detalhes in todos_detalhes:
     ano = driver.find_element(By.NAME, 'ano')
     ano.send_keys(ano_valor)
 
-    # Câmbio (checkbox)
+    
     if cambio_valor == "automático":
         cambio = driver.find_element(By.NAME, 'cambioAutomatico')
         cambio.click()
 
-    # Tipo de veículo (radio)
+    
     if "hatch" in tipo_valor:
         tipoVeiculo = driver.find_element(By.ID, 'c_hatch')
         tipoVeiculo.click()
@@ -150,7 +149,7 @@ for detalhes in todos_detalhes:
         tipoVeiculo = driver.find_element(By.ID, 'c_sedan')
         tipoVeiculo.click()
 
-    # Cor (select)
+    
     cor_select = Select(driver.find_element(By.ID, 'cor'))
     cores_possiveis = ["branco", "preto", "prata", "vermelho", "verde", "azul", "rosa"]
 
@@ -167,7 +166,7 @@ for detalhes in todos_detalhes:
 
     sleep(2)
     
-    inserir = driver.find_element(By.XPATH, '/html/body/div[1]/div/form/div[4]/div[3]/input')
+    inserir = driver.find_element(By.XPATH, '/html/body/div[1]/div/form/div[4]/div[3]/input')#ou ta dadno erro aqui(juro que não sei!)
     inserir.click()
     
     # Espera antes de ir para o próximo
